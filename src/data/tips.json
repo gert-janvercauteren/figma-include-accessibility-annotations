@@ -26,6 +26,9 @@
     },
     "Color blindness": {
       "text": "People may perceive colors differently, and may not be able to differentiate between some or all colors. Ensure a design does not rely only on color to convey meaning."
+    },
+    "Other annotations": {
+        "text": "Use additional annotations for adding notes for elements not covered in the previous steps (e.g. component roles, announcements, interaction behavior). "
     }
   },
   "web": {
@@ -61,6 +64,9 @@
     },
     "Complex gestures": {
       "text": "When actions can be performed with a <em>gesture</em> ensure there is an alternate and visible way to perform this using only clicks or taps."
+    },
+    "Other annotations": {
+      "text": "Use additional annotations for adding notes for elements not covered in the previous steps (e.g. component roles, announcements, interaction behavior). "
     }
   }
 }
