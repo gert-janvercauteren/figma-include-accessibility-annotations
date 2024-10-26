@@ -78,5 +78,13 @@
     "path": "complex-gestures",
     "shouldHide": true,
     "percent": 8
+  },
+  "Other annotations": {
+    "id": "Other annotations",
+    "label": "Other annotations",
+    "designerCheck": "Other annotations documented",
+    "path": "other-annotations",
+    "shouldHide": true,
+    "percent": 0
   }
 }
