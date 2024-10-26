@@ -37,6 +37,7 @@ import Context from './context';
 import routes from './data/routes.json';
 import routesNative from './data/routes-native.json';
 import ErrorBoundary from './components/ErrorBoundary';
+import OtherAnnotations from './pages/OtherAnnotations';
 
 function App() {
   const cnxt = React.useContext(Context);
@@ -208,6 +209,10 @@ function App() {
                 />
                 <Route path="color-blindness" element={<ColorBlindness />} />
                 <Route path="complex-gestures" element={<ComplexGestures />} />
+                <Route
+                  path="other-annotations"
+                  element={<OtherAnnotations />}
+                />
               </React.Fragment>
             )}
 
@@ -222,6 +227,10 @@ function App() {
                 <Route path="text-zoom" element={<TextZoom />} />
                 <Route path="complex-gestures" element={<ComplexGestures />} />
                 <Route path="color-blindness" element={<ColorBlindness />} />
+                <Route
+                  path="other-annotations"
+                  element={<OtherAnnotations />}
+                />
               </React.Fragment>
             )}
           </Routes>
