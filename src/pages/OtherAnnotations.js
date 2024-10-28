@@ -1,14 +1,20 @@
 import * as React from 'react';
-import { AnnotationStepPage, HeadingStep } from '../components';
 import Context from '../context';
 
 import annotationTypesAll from '../data/other-annotation-types';
 import { utils } from '../constants';
 
+// components
+import {
+  AnnotationStepPage,
+  HeadingStep,
+  OtherAnnotationRow
+} from '../components';
+
 function OtherAnnotations() {
   const cnxt = React.useContext(Context);
-  const { otherAnnotationsTemp, page, pageType } = cnxt;
-  const { sendToFigma } = cnxt;
+  const { otherAnnotations, otherAnnotationsTemp, page, pageType } = cnxt;
+  const { sendToFigma, updateState } = cnxt;
 
   // local state
   const [selectedNodes, setSelectedNodes] = React.useState(null);
@@ -18,6 +24,7 @@ function OtherAnnotations() {
   const annotationTypes = annotationTypesAll;
   const annotationTypesArray = Object.keys(annotationTypes);
   const hasSelectedNodes = selectedNodes && selectedNodes.length > 0;
+  const otherAnnotationsArray = Object.keys(otherAnnotations);
 
   const selectedText = () => {
     if (selectedNodes.length === 1) {
@@ -67,6 +74,13 @@ function OtherAnnotations() {
       pageType,
       annotations: newAnnotations
     });
+
+    const otherAnnotationsObj = {};
+    newAnnotations.forEach((item) => {
+      otherAnnotationsObj[item.id] = item;
+    });
+
+    updateState('otherAnnotations', otherAnnotationsObj);
   };
 
   return (
@@ -75,6 +89,19 @@ function OtherAnnotations() {
       routeName={routeName}
       bannerTipProps={{ pageType, routeName }}
     >
+      <React.Fragment>
+        {otherAnnotationsArray.length > 0 && (
+          <React.Fragment>
+            {otherAnnotationsArray.map((key) => {
+              const { id } = otherAnnotations[key];
+
+              return (
+                <OtherAnnotationRow annotation={{ id: id }} />
+              )
+            })}
+          </React.Fragment>
+        )}
+      </React.Fragment>
       <React.Fragment>
         <HeadingStep number={1} text={stepOneText} />
 

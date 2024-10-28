@@ -91,7 +91,8 @@ class AppState extends React.Component {
       sessionId: 0,
 
       // other annotations
-      otherAnnotationsTemp: null,
+      otherAnnotations: {},
+      otherAnnotationsTemp: null
     };
 
     this.updateState = this.updateState.bind(this);
@@ -396,7 +397,7 @@ class AppState extends React.Component {
     // user data
     const { currentUser, newFeaturesIntro, sessionId } = this.state;
 
-    const { otherAnnotationsTemp } = this.state;
+    const { otherAnnotations, otherAnnotationsTemp } = this.state;
 
     return (
       <Context.Provider
@@ -468,6 +469,7 @@ class AppState extends React.Component {
           sessionId,
 
           // other annotations
+          otherAnnotations,
           otherAnnotationsTemp,
 
           // environment and project
