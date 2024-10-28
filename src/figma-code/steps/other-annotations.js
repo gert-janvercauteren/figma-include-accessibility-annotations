@@ -84,6 +84,8 @@ const createOtherAnnotationFrameInFigma = ({
 };
 
 export const addOtherAnnotations = (msg) => {
+  figma.currentPage.selection = [];
+
   const { annotations, page, pageType } = msg;
   const { bounds } = page;
   const { height: pageH, width: pageW } = bounds;
@@ -111,7 +113,9 @@ export const addOtherAnnotations = (msg) => {
     otherAnnotationsFrame = figma.getNodeById(otherAnnotationsExists);
   }
 
-  // {id: '811:955', name: '🚧 Destination • SEO', absoluteRenderBounds: {…}, type: 'general'}
+  // Allow frame to be visible on top, but not interfere with selection
+  otherAnnotationsFrame.locked = true;
+
   annotations.forEach((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
 
