@@ -80,7 +80,10 @@ function OtherAnnotations() {
       otherAnnotationsObj[item.id] = item;
     });
 
-    updateState('otherAnnotations', otherAnnotationsObj);
+    updateState('otherAnnotations', {
+      ...otherAnnotationsObj,
+      ...otherAnnotations
+    });
   };
 
   return (
@@ -89,19 +92,6 @@ function OtherAnnotations() {
       routeName={routeName}
       bannerTipProps={{ pageType, routeName }}
     >
-      <React.Fragment>
-        {otherAnnotationsArray.length > 0 && (
-          <React.Fragment>
-            {otherAnnotationsArray.map((key) => {
-              const { id } = otherAnnotations[key];
-
-              return (
-                <OtherAnnotationRow annotation={{ id: id }} />
-              )
-            })}
-          </React.Fragment>
-        )}
-      </React.Fragment>
       <React.Fragment>
         <HeadingStep number={1} text={stepOneText} />
 
@@ -133,6 +123,17 @@ function OtherAnnotations() {
           })}
         </div>
       </React.Fragment>
+
+      {otherAnnotationsArray.length > 0 && (
+        <React.Fragment>
+          <HeadingStep number={2} text="Adjust annotation values" />
+          {otherAnnotationsArray.map((key) => {
+            const { id } = otherAnnotations[key];
+
+            return <OtherAnnotationRow annotation={{ id }} />;
+          })}
+        </React.Fragment>
+      )}
     </AnnotationStepPage>
   );
 }
