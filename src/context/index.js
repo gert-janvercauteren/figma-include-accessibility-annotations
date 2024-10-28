@@ -57,5 +57,6 @@ export default React.createContext({
   sessionId: 0,
 
   // other annotations
+  otherAnnotations: {},
   otherAnnotationsTemp: null
 });
