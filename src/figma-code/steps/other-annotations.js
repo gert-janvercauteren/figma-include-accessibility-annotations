@@ -1,6 +1,8 @@
 import { getOrCreateMainA11yFrame } from '../frame-helpers';
 import { colors, figmaLayer, utils } from '../../constants';
 
+import annotationTypesAll from '../../data/other-annotation-types';
+
 const otherAnnotationsLayerName = 'Other annotations Layer';
 
 const getOtherAnnotationBlockName = ({
@@ -18,69 +20,79 @@ const createOtherAnnotationFrameInFigma = ({
   otherAnnotationsFrame,
   otherAnnotationTitle,
   otherAnnotationType,
-  id
+  id,
+  index = 0
 }) => {
   const contextX = otherAnnotationBounds.x - pageX;
   const contextY = otherAnnotationBounds.y - pageY;
 
   const { otherPurple, white } = colors;
 
-  // create heading outline
-  const otherAnnotationOutline = figmaLayer.createRectangle({
-    name: 'Other annotation outline',
+  // Create frame for annotation
+  const annotationBlock = figmaLayer.createTransparentFrame({
+    name: `Other annotation: ${otherAnnotationType} | ${otherAnnotationTitle.trim()} | ${id.trim()}`,
     x: contextX,
     y: contextY,
     height: otherAnnotationBounds.height,
+    width: otherAnnotationBounds.width
+  });
+
+  // Create rectangle
+  const rectNode = figmaLayer.createRectangle({
+    name: `Other annotation area ${otherAnnotationType}`,
+    height: otherAnnotationBounds.height,
     width: otherAnnotationBounds.width,
-    strokeColor: otherPurple,
-    radiusMixed: [{ topLeftRadius: 0 }],
     fillColor: otherPurple,
-    opacity: 0.2
+    strokeColor: otherPurple
   });
 
-  // start of group array
-  const toGroupArray = [otherAnnotationOutline];
+  rectNode.dashPattern = [0.01, 6];
+  rectNode.strokeCap = 'ROUND';
+  rectNode.strokeAlign = 'CENTER';
 
-  // create annotation label
-  const label = figmaLayer.createRectangle({
+  // Add rectangle to layer
+  annotationBlock.appendChild(rectNode);
+
+  // Create label background with auto-layout
+  const labelFrame = figmaLayer.createFrame({
     name: 'Label Background',
-    height: 29,
-    width: pageType === 'web' ? 40 : 29,
-    x: contextX - 8,
-    y: contextY - 12,
+    height: 1,
+    width: 1,
+    x: -8,
+    y: -8,
     fillColor: otherPurple,
-    stroke: 0,
-    opacity: 1,
-    radius: 0
+    opacity: 1
   });
-  toGroupArray.push(label);
+
+  labelFrame.layoutMode = 'HORIZONTAL';
+  labelFrame.horizontalPadding = 8;
+  labelFrame.verticalPadding = 5;
+  labelFrame.counterAxisSizingMode = 'AUTO';
+  labelFrame.strokes = [{ type: 'SOLID', color: white }];
+  labelFrame.strokeWeight = 2;
+
+  // do NOT have it scale with the surrounding frame
+  labelFrame.constraints = {
+    horizontal: 'MIN',
+    vertical: 'MIN'
+  };
 
   // create annotation name for label
-  const numberNode = figma.createText();
-  numberNode.fontSize = 18;
+  const labelNode = figma.createText();
+  labelNode.name = `Other annotation: ${otherAnnotationTitle}`;
+  labelNode.fontSize = 15;
+  labelNode.characters = `${index + 1} ${annotationTypesAll[otherAnnotationType].label}`;
+  labelNode.fills = [{ type: 'SOLID', color: colors.white }];
+  labelNode.fontName = { family: 'Roboto', style: 'Bold' };
 
-  numberNode.name = `Annotation Type: ${otherAnnotationType}`;
-  numberNode.characters = `1 ${otherAnnotationType}`;
+  // add label node to frame
+  labelFrame.appendChild(labelNode);
 
-  numberNode.fills = [{ type: 'SOLID', color: white }];
-  numberNode.fontName = { family: 'Roboto', style: 'Bold' };
-  numberNode.x = contextX;
-  numberNode.y = contextY - 8;
-  toGroupArray.push(numberNode);
+  // Add label to frame
+  annotationBlock.appendChild(labelFrame);
 
-  const annotationsBlock = figma.group(toGroupArray, otherAnnotationsFrame);
-  const blockName = getOtherAnnotationBlockName({
-    id,
-    otherAnnotationType,
-    otherAnnotationTitle
-  });
-
-  annotationsBlock.name = blockName;
-  annotationsBlock.resizeWithoutConstraints(
-    otherAnnotationBounds.width,
-    otherAnnotationBounds.height
-  );
-  otherAnnotationBounds.expanded = false;
+  // Add annotation block to other annotations frame
+  otherAnnotationsFrame.appendChild(annotationBlock);
 };
 
 export const addOtherAnnotations = (msg) => {
@@ -116,19 +128,24 @@ export const addOtherAnnotations = (msg) => {
   // Allow frame to be visible on top, but not interfere with selection
   otherAnnotationsFrame.locked = true;
 
-  annotations.forEach((annotation) => {
+  let index = 0;
+
+  annotations.map((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
 
     createOtherAnnotationFrameInFigma({
       pageType,
-      pageX: 0,
-      pageY: 0,
+      pageX: bounds.x,
+      pageY: bounds.y,
       otherAnnotationBounds: absoluteRenderBounds,
       otherAnnotationsFrame,
       otherAnnotationTitle: name,
       otherAnnotationType: type,
-      id
+      id,
+      index
     });
+
+    index += 1;
   });
 };
 
