@@ -5,15 +5,7 @@ import annotationTypesAll from '../../data/other-annotation-types';
 
 const otherAnnotationsLayerName = 'Other annotations Layer';
 
-const getOtherAnnotationBlockName = ({
-  otherAnnotationType,
-  otherAnnotationTitle,
-  id
-}) =>
-  `Other annotation: ${otherAnnotationType} | ${otherAnnotationTitle.trim()} | ${id.trim()}`;
-
 const createOtherAnnotationFrameInFigma = ({
-  pageType,
   pageX,
   pageY,
   otherAnnotationBounds,
@@ -134,7 +126,6 @@ export const addOtherAnnotations = (msg) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
 
     createOtherAnnotationFrameInFigma({
-      pageType,
       pageX: bounds.x,
       pageY: bounds.y,
       otherAnnotationBounds: absoluteRenderBounds,
