@@ -5,7 +5,8 @@ export default (
   pageSelected,
   listenForHeadings,
   defaultHeadingType,
-  listenForAltText
+  listenForAltText,
+  listenForOtherAnnotations
 ) => {
   const { selection } = figma.currentPage;
   const selectionLength = selection.length;
@@ -140,6 +141,26 @@ export default (
         data: { selected },
         type: 'alt-text-image-selected'
       });
+    });
+
+    return null;
+  } else if (listenForOtherAnnotations === true) {
+    console.log('Other annot LISTENING');
+    console.log(selection);
+
+    const selectedItems = selection.map((node) => {
+      const { absoluteRenderBounds, id, name } = node;
+
+      return {
+        id,
+        name,
+        absoluteRenderBounds
+      };
+    });
+
+    figma.ui.postMessage({
+      data: { selectedItems },
+      type: 'other-annotations-selected'
     });
 
     return null;

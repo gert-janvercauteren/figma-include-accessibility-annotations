@@ -40,6 +40,9 @@ let defaultHeadingType = 2;
 // selection for alt text listener
 let listenForAltText = false;
 
+// selection for other annotation listener
+let listenForOtherAnnotations = false;
+
 // clear console every time plugin opens
 // eslint-disable-next-line no-console
 console.clear();
@@ -82,7 +85,8 @@ figma.on('selectionchange', () => {
     pageSelected,
     listenForHeadings,
     defaultHeadingType,
-    listenForAltText
+    listenForAltText,
+    listenForOtherAnnotations
   );
 });
 
@@ -472,6 +476,19 @@ figma.ui.onmessage = async (msg) => {
     figma.notify(notifyMsg, {
       timeout: config.notifyTime
     });
+  }
+
+  if (type === 'other-annotations-listener') {
+    const { shouldListen } = msg;
+
+    console.log(`Other annotations: ${shouldListen}`);
+
+    listenForOtherAnnotations = shouldListen;
+  }
+
+  if (type === 'add-other-annotations') {
+    console.log('Add others');
+    step.otherAnnotations.addOtherAnnotations(msg);
   }
 
   // close plugin

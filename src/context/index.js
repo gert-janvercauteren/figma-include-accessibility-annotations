@@ -54,5 +54,8 @@ export default React.createContext({
   // user data
   currentUser: null,
   newFeaturesIntro: [],
-  sessionId: 0
+  sessionId: 0,
+
+  // other annotations
+  otherAnnotationsTemp: null
 });

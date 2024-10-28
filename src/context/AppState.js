@@ -88,7 +88,10 @@ class AppState extends React.Component {
       // user data
       currentUser: null,
       newFeaturesIntro: [],
-      sessionId: 0
+      sessionId: 0,
+
+      // other annotations
+      otherAnnotationsTemp: null,
     };
 
     this.updateState = this.updateState.bind(this);
@@ -317,6 +320,11 @@ class AppState extends React.Component {
         this.setState({ headingTemp: selected[0] });
         break;
 
+      case 'other-annotations-selected':
+        const { selectedItems } = data;
+        this.setState({ otherAnnotationsTemp: selectedItems });
+        break;
+
       // no need for this yet, but a msg hook is here
       case 'selection-change':
         break;
@@ -388,6 +396,8 @@ class AppState extends React.Component {
     // user data
     const { currentUser, newFeaturesIntro, sessionId } = this.state;
 
+    const { otherAnnotationsTemp } = this.state;
+
     return (
       <Context.Provider
         // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -456,6 +466,9 @@ class AppState extends React.Component {
           currentUser,
           newFeaturesIntro,
           sessionId,
+
+          // other annotations
+          otherAnnotationsTemp,
 
           // environment and project
           isProd: process.env.ISPROD,
