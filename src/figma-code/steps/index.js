@@ -10,6 +10,7 @@ import readingOrder from './reading-order';
 import responsiveReflow from './responsive-reflow';
 import textZoom from './text-zoom';
 import touchTarget from './touch-target';
+import otherAnnotations from './other-annotations';
 
 export default {
   altText,
@@ -23,5 +24,6 @@ export default {
   readingOrder,
   responsiveReflow,
   textZoom,
-  touchTarget
+  touchTarget,
+  otherAnnotations
 };

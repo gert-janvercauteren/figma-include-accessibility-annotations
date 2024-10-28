@@ -18,5 +18,8 @@ export default {
   grey: { r: 206 / 255, g: 206 / 255, b: 206 / 255 },
 
   // #ffffff || rgb(255, 255, 255)
-  white: { r: 1, g: 1, b: 1 }
+  white: { r: 1, g: 1, b: 1 },
+
+  // #3F2F9B || rgba(63, 47, 155)
+  otherPurple: { r: 63 / 255, g: 47 / 255, b: 155 / 255 }
 };
