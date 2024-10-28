@@ -122,7 +122,7 @@ export const addOtherAnnotations = (msg) => {
 
   let index = 0;
 
-  annotations.map((annotation) => {
+  annotations.forEach((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
 
     createOtherAnnotationFrameInFigma({
