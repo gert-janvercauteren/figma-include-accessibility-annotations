@@ -145,9 +145,6 @@ export default (
 
     return null;
   } else if (listenForOtherAnnotations === true) {
-    console.log('Other annot LISTENING');
-    console.log(selection);
-
     const selectedItems = selection.map((node) => {
       const { absoluteRenderBounds, id, name } = node;
 
