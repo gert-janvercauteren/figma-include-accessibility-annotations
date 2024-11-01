@@ -25,6 +25,7 @@ function OtherAnnotations() {
   const annotationTypesArray = Object.keys(annotationTypes);
   const hasSelectedNodes = selectedNodes && selectedNodes.length > 0;
   const otherAnnotationsArray = Object.keys(otherAnnotations);
+  const hasAnnotations = otherAnnotationsArray.length > 0;
 
   const selectedText = () => {
     if (selectedNodes.length === 1) {
@@ -81,8 +82,8 @@ function OtherAnnotations() {
     });
 
     updateState('otherAnnotations', {
-      ...otherAnnotationsObj,
-      ...otherAnnotations
+      ...otherAnnotations,
+      ...otherAnnotationsObj
     });
   };
 
@@ -92,8 +93,19 @@ function OtherAnnotations() {
       routeName={routeName}
       bannerTipProps={{ pageType, routeName }}
     >
+      {hasAnnotations && (
+        <React.Fragment>
+          <HeadingStep number={1} text="Add annotations" />
+          {otherAnnotationsArray.map((key) => {
+            const { id, type } = otherAnnotations[key];
+
+            return <OtherAnnotationRow annotation={{ id, type }} />;
+          })}
+        </React.Fragment>
+      )}
+
       <React.Fragment>
-        <HeadingStep number={1} text={stepOneText} />
+        <HeadingStep number={hasAnnotations ? 2 : 1} text={stepOneText} />
 
         <div className="button-group" role="radiogroup">
           {annotationTypesArray.map((type) => {
@@ -114,7 +126,7 @@ function OtherAnnotations() {
                   role="button"
                   tabIndex={0}
                 >
-                  <div>{icon}</div>
+                  <div className="annotation-type-icon">{icon}</div>
                 </div>
 
                 <div className="selection-button-label">{label}</div>
@@ -123,17 +135,6 @@ function OtherAnnotations() {
           })}
         </div>
       </React.Fragment>
-
-      {otherAnnotationsArray.length > 0 && (
-        <React.Fragment>
-          <HeadingStep number={2} text="Adjust annotation values" />
-          {otherAnnotationsArray.map((key) => {
-            const { id } = otherAnnotations[key];
-
-            return <OtherAnnotationRow annotation={{ id }} />;
-          })}
-        </React.Fragment>
-      )}
     </AnnotationStepPage>
   );
 }
