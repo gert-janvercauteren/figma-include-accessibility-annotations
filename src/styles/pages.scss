@@ -513,3 +513,12 @@ $selection-button-width: 72px;
     margin-right: 4px;
   }
 }
+
+// Other annotations
+// /////////////////////////////////////////////////////////////////////////////
+.annotation-type-icon {
+  & svg {
+    height: 32px;
+    width: 32px;
+  }
+}
