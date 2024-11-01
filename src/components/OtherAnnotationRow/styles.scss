@@ -1,7 +1,31 @@
 .other-annotation-row {
     align-items: center;
-    justify-content: space-between;
     column-gap: var(--spacing-xs);
     display: flex;
+    justify-content: space-between;
     margin-bottom: var(--spacing-xs);
+}
+
+.annotation-type-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #e5e5e5;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.other-annotation-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    column-gap: var(--spacing-xxs);
+
+    & input {
+        flex-grow: 1;
+    }
+
+    .label {
+        font-weight: bold;
+    }
 }

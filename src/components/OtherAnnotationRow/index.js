@@ -4,15 +4,39 @@ import PropTypes from 'prop-types';
 // styles
 import './styles.scss';
 import { utils } from '../../constants';
+import annotationTypesAll from '../../data/other-annotation-types';
+import Context from '../../context';
 
 function OtherAnnotationRow(props) {
-  const { annotation } = props;
+  // main app state
+  const { zoomTo } = React.useContext(Context);
+
+  const { annotation, warnClass = '' } = props;
+  const annotationTypes = annotationTypesAll;
 
   return (
     <div className="other-annotation-row">
-      <div>TYPE box</div>
+      <div>
+        <button
+          type="button"
+          className="annotation-type-button"
+          onClick={() => zoomTo([annotation.id], true)}
+        >
+          {annotationTypes[annotation.type].icon}
+        </button>
+      </div>
 
-      <div>Custom content {annotation.id}</div>
+      <div className="other-annotation-content">
+        <div className="label">{annotationTypes[annotation.type].label}:</div>
+        <input
+          className={`input${warnClass}`}
+          type="text"
+          // onChange={onChange}
+          // onFocus={onFocus}
+          placeholder="Type here"
+          // value={altText}
+        />
+      </div>
 
       <div
         aria-label="remove other annotation"
@@ -36,8 +60,10 @@ function OtherAnnotationRow(props) {
 
 OtherAnnotationRow.propTypes = {
   annotation: {
-    id: PropTypes.string.isRequired
-  }
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired
+  },
+  warnClass: PropTypes.string
 };
 
 export default React.memo(OtherAnnotationRow);
