@@ -2,13 +2,7 @@ import * as React from 'react';
 
 function SvgRole() {
   return (
-    <svg
-      width="31"
-      height="23"
-      viewBox="0 0 31 23"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 31 23" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M23.6155 5.84613C24.2212 6.45189 27.9063 10.1369 29.673 11.9037L23.6155 17.9613"
         stroke="black"
