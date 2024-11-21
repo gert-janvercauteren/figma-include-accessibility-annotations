@@ -73,7 +73,8 @@ function OtherAnnotations() {
     sendToFigma('add-other-annotations', {
       page,
       pageType,
-      annotations: newAnnotations
+      annotations: newAnnotations,
+      startIndex: otherAnnotationsArray.length
     });
 
     const otherAnnotationsObj = {};

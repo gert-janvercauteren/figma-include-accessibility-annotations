@@ -487,7 +487,6 @@ figma.ui.onmessage = async (msg) => {
   }
 
   if (type === 'add-other-annotations') {
-    console.log('Add others');
     step.otherAnnotations.addOtherAnnotations(msg);
   }
 
