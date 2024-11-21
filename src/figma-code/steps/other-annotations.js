@@ -1,9 +1,74 @@
-import { getOrCreateMainA11yFrame } from '../frame-helpers';
+import {
+  createAnnotationFrame,
+  createAnnotationFrameTitleText,
+  createAnnotationInfoFrame,
+  createAnnotationLabelValueRow,
+  createAnnotationNumberFrame,
+  createInnerAnnotationFrame,
+  getOrCreateMainA11yFrame,
+  getOrCreateMainAnnotationsFrame
+} from '../frame-helpers';
 import { colors, figmaLayer, utils } from '../../constants';
 
 import annotationTypesAll from '../../data/other-annotation-types';
 
 const otherAnnotationsLayerName = 'Other annotations Layer';
+
+// Create the items inside a single item
+const createOtherAnnotationInfoFrame = ({ type, valueDict }) => {
+  const otherAnnotationInfoFrame = createAnnotationInfoFrame({
+    name: 'Other annotation info'
+  });
+
+  Object.keys(valueDict).forEach((key) => {
+    otherAnnotationInfoFrame.appendChild(
+      createAnnotationLabelValueRow({
+        rowName: key,
+        label: `${key}:`,
+        value: valueDict[key]
+      })
+    );
+  });
+
+  return otherAnnotationInfoFrame;
+};
+
+// Create a single entry for the sidebar
+const createOtherAnnotation = ({ number, id, type, valueDict }) => {
+  // Create other annotation with horizontal auto layout
+  const otherAnnotationBlock = createInnerAnnotationFrame({
+    annotationBlockName: 'Other annotation',
+    number,
+    id
+  });
+
+  // Add the annotation number
+  otherAnnotationBlock.appendChild(
+    createAnnotationNumberFrame({
+      number,
+      fillColor: colors.otherPurple
+    })
+  );
+
+  // Add the annotation info
+  otherAnnotationBlock.appendChild(
+    createOtherAnnotationInfoFrame({ type, valueDict })
+  );
+
+  return otherAnnotationBlock;
+};
+
+const createOtherAnnotationAnnotationFrame = ({ name }) => {
+  // create an annotation frame
+  const frame = createAnnotationFrame({ name });
+
+  // and add the Annotation frame title
+  const annotationTitle = createAnnotationFrameTitleText({
+    title: name
+  });
+  frame.appendChild(annotationTitle);
+  return frame;
+};
 
 const createOtherAnnotationFrameInFigma = ({
   pageX,
@@ -90,7 +155,7 @@ const createOtherAnnotationFrameInFigma = ({
 export const addOtherAnnotations = (msg) => {
   figma.currentPage.selection = [];
 
-  const { annotations, page, pageType } = msg;
+  const { annotations, startIndex, page, pageType } = msg;
   const { bounds } = page;
   const { height: pageH, width: pageW } = bounds;
 
@@ -120,7 +185,7 @@ export const addOtherAnnotations = (msg) => {
   // Allow frame to be visible on top, but not interfere with selection
   otherAnnotationsFrame.locked = true;
 
-  let index = 0;
+  let index = startIndex;
 
   annotations.forEach((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
@@ -140,4 +205,54 @@ export const addOtherAnnotations = (msg) => {
   });
 };
 
-export default { addOtherAnnotations };
+export const saveAnnotations = (msg) => {
+  const { annotations, page, pageType } = msg;
+
+  // get main A11y frame if it exists (or create it)
+  const mainFrame = getOrCreateMainA11yFrame({ page, pageType });
+
+  // Add to annotation sidebar
+  // TODO: Cleanup old one
+  const mainAnnotationsFrame = getOrCreateMainAnnotationsFrame({
+    mainFrame,
+    page
+  });
+
+  // Create annotation frame
+  const annotationFrame = createOtherAnnotationAnnotationFrame({
+    name: 'Other annotations'
+  });
+
+  // Create sub-type frame
+  const subTypeFrame = createOtherAnnotationAnnotationFrame({
+    name: 'Role'
+  });
+
+  annotationFrame.appendChild(subTypeFrame);
+
+  let index = 0;
+  annotations.forEach((annotation) => {
+    const { id, type, name } = annotation;
+    const valueDict = {
+      Name: name,
+      Role: 'Checkbox',
+      State: 'Unchecked'
+    };
+
+    subTypeFrame.appendChild(
+      createOtherAnnotation({
+        number: index,
+        id,
+        type,
+        valueDict
+      })
+    );
+
+    index += 1;
+  });
+
+  // add Annotation layer to the main annotations frame
+  mainAnnotationsFrame.insertChild(0, annotationFrame);
+};
+
+export default { addOtherAnnotations, saveAnnotations };
