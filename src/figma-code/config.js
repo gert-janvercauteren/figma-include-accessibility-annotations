@@ -18,7 +18,8 @@ export default {
     'Responsive reflow Layer',
     'Focus grouping Layer',
     'Complex gestures Layer',
-    'Color blindness Layer'
+    'Color blindness Layer',
+    'Other annotations Layer'
   ],
   a11yCheckboxLayers: [
     'Contrast Layer',
