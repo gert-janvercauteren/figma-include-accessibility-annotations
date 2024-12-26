@@ -480,9 +480,6 @@ figma.ui.onmessage = async (msg) => {
 
   if (type === 'other-annotations-listener') {
     const { shouldListen } = msg;
-
-    console.log(`Other annotations: ${shouldListen}`);
-
     listenForOtherAnnotations = shouldListen;
   }
 
