@@ -354,6 +354,25 @@ const isA11yLayer = (children, childNode, name) => {
         visible: frameChild.visible
       };
       a11yCompletedLayers.push(stepName);
+    } else if (stepName === 'Other annotations') {
+      let otherAnnotationsData;
+
+      try {
+        otherAnnotationsData = JSON.parse(
+          frameChild.getPluginData('annotationData')
+        );
+      } catch (e) {
+        console.error('Could not parse other annotation data (JSON parsing)');
+      }
+
+      stepsData[stepName] = {
+        id: frameChild.id,
+        existingData: otherAnnotationsData,
+        stateKey: 'otherAnnotations',
+        visible: frameChild.visible
+      };
+
+      a11yCompletedLayers.push(stepName);
     } else {
       // eslint-disable-next-line
       console.error(`step "${stepName}" is not accounted for yet`);

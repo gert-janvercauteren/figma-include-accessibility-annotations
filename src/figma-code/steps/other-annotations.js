@@ -70,7 +70,7 @@ const createOtherAnnotationAnnotationFrame = ({ name }) => {
   return frame;
 };
 
-const createOtherAnnotationFrameInFigma = ({
+const createOutlineFrame = ({
   pageX,
   pageY,
   otherAnnotationBounds,
@@ -150,6 +150,8 @@ const createOtherAnnotationFrameInFigma = ({
 
   // Add annotation block to other annotations frame
   otherAnnotationsFrame.appendChild(annotationBlock);
+
+  return annotationBlock.id;
 };
 
 export const addOtherAnnotations = (msg) => {
@@ -187,10 +189,24 @@ export const addOtherAnnotations = (msg) => {
 
   let index = startIndex;
 
+  // Get previous saved data
+
+  const previousRawData = otherAnnotationsFrame.getPluginData('annotationData');
+  let annotationsData;
+  try {
+    annotationsData = JSON.parse(previousRawData);
+  } catch (e) {
+    console.error('Could not parse previous annotation data');
+  }
+
+  if (typeof annotationsData !== 'object' || annotationsData === null) {
+    annotationsData = {};
+  }
+
   annotations.forEach((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
 
-    createOtherAnnotationFrameInFigma({
+    const outlineId = createOutlineFrame({
       pageX: bounds.x,
       pageY: bounds.y,
       otherAnnotationBounds: absoluteRenderBounds,
@@ -202,9 +218,22 @@ export const addOtherAnnotations = (msg) => {
     });
 
     index += 1;
+
+    annotationsData[id] = {
+      id,
+      name,
+      type,
+      outlineId
+    };
   });
+
+  otherAnnotationsFrame.setPluginData(
+    'annotationData',
+    JSON.stringify(annotationsData)
+  );
 };
 
+// NOT IN USE NOW
 export const saveAnnotations = (msg) => {
   const { annotations, page, pageType } = msg;
 
