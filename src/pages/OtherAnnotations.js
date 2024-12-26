@@ -1,15 +1,15 @@
-import * as React from 'react';
-import Context from '../context';
+import * as React from "react";
+import Context from "../context";
 
-import annotationTypesAll from '../data/other-annotation-types';
-import { utils } from '../constants';
+import annotationTypesAll from "../data/other-annotation-types";
+import { utils } from "../constants";
 
 // components
 import {
   AnnotationStepPage,
   HeadingStep,
   OtherAnnotationRow
-} from '../components';
+} from "../components";
 
 function OtherAnnotations() {
   const cnxt = React.useContext(Context);
@@ -20,7 +20,7 @@ function OtherAnnotations() {
   const [selectedNodes, setSelectedNodes] = React.useState(null);
 
   // ui state
-  const routeName = 'Other annotations';
+  const routeName = "Other annotations";
   const annotationTypes = annotationTypesAll;
   const annotationTypesArray = Object.keys(annotationTypes);
   const hasSelectedNodes = selectedNodes && selectedNodes.length > 0;
@@ -37,17 +37,17 @@ function OtherAnnotations() {
 
   const stepOneText = hasSelectedNodes
     ? `${selectedText()} selected`
-    : 'Hold Ctrl/Cmd to select layer in your mock that needs annotating, and choose type of annotation.';
+    : "Hold Ctrl/Cmd to select layer in your mock that needs annotating, and choose type of annotation.";
 
   React.useEffect(() => {
-    sendToFigma('other-annotations-listener', {
+    sendToFigma("other-annotations-listener", {
       page,
       pageType,
       shouldListen: true
     });
 
     return () => {
-      sendToFigma('other-annotations-listener', {
+      sendToFigma("other-annotations-listener", {
         page,
         pageType,
         shouldListen: false
@@ -70,7 +70,7 @@ function OtherAnnotations() {
       type: annotationType
     }));
 
-    sendToFigma('add-other-annotations', {
+    sendToFigma("add-other-annotations", {
       page,
       pageType,
       annotations: newAnnotations,
@@ -82,7 +82,7 @@ function OtherAnnotations() {
       otherAnnotationsObj[item.id] = item;
     });
 
-    updateState('otherAnnotations', {
+    updateState("otherAnnotations", {
       ...otherAnnotations,
       ...otherAnnotationsObj
     });
@@ -94,47 +94,49 @@ function OtherAnnotations() {
       routeName={routeName}
       bannerTipProps={{ pageType, routeName }}
     >
-      {hasAnnotations && (
-        <React.Fragment>
-          <HeadingStep number={1} text="Add annotations" />
-          {otherAnnotationsArray.map((key) => {
-            const { id, type } = otherAnnotations[key];
-
-            return <OtherAnnotationRow annotation={{ id, type }} />;
-          })}
-        </React.Fragment>
-      )}
-
       <React.Fragment>
-        <HeadingStep number={hasAnnotations ? 2 : 1} text={stepOneText} />
+        {hasAnnotations && (
+          <React.Fragment>
+            <HeadingStep number={1} text="Add annotations" />
+            {otherAnnotationsArray.map((key) => {
+              const { id, type } = otherAnnotations[key];
 
-        <div className="button-group" role="radiogroup">
-          {annotationTypesArray.map((type) => {
-            const { label, icon } = annotationTypes[type];
+              return <OtherAnnotationRow annotation={{ id, type }} key={id} />;
+            })}
+          </React.Fragment>
+        )}
 
-            const onClick = () => {
-              onInitialTypeSelect(type);
-            };
+        <React.Fragment>
+          <HeadingStep number={hasAnnotations ? 2 : 1} text={stepOneText} />
 
-            return (
-              <div key={label} className="container-selection-button">
-                <div
-                  className="selection-button"
-                  onClick={onClick}
-                  onKeyDown={(e) => {
-                    if (utils.isEnterKey(e.key)) onClick();
-                  }}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div className="annotation-type-icon">{icon}</div>
+          <div className="button-group" role="radiogroup">
+            {annotationTypesArray.map((type) => {
+              const { label, icon } = annotationTypes[type];
+
+              const onClick = () => {
+                onInitialTypeSelect(type);
+              };
+
+              return (
+                <div key={label} className="container-selection-button">
+                  <div
+                    className="selection-button"
+                    onClick={onClick}
+                    onKeyDown={(e) => {
+                      if (utils.isEnterKey(e.key)) onClick();
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="annotation-type-icon">{icon}</div>
+                  </div>
+
+                  <div className="selection-button-label">{label}</div>
                 </div>
-
-                <div className="selection-button-label">{label}</div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </React.Fragment>
       </React.Fragment>
     </AnnotationStepPage>
   );
