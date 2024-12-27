@@ -45,7 +45,7 @@ function Footer({ primaryAction = null, secondaryAction = null, routeName }) {
     const pluginWidth = leftNavVisible === false ? 516 : 700;
     sendToFigma('resize-plugin', {
       condensed: leftNavVisible === false,
-      height: 518,
+      height: 560,
       width: pluginWidth
     });
 

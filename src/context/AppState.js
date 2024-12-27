@@ -138,7 +138,7 @@ class AppState extends React.Component {
         if (prefCondensedUI === true) {
           sendToFigma('resize-plugin', {
             condensed: true,
-            height: 518,
+            height: 560,
             width: 516
           });
         }

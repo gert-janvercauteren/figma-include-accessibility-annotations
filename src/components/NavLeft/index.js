@@ -35,7 +35,7 @@ function NavLeft({ progress = null }) {
     const pluginWidth = leftNavVisible ? 516 : 700;
     sendToFigma('resize-plugin', {
       condensed: leftNavVisible,
-      height: 518,
+      height: 560,
       width: pluginWidth
     });
 
