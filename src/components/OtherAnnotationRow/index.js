@@ -6,13 +6,17 @@ import './styles.scss';
 import { utils } from '../../constants';
 import annotationTypesAll from '../../data/other-annotation-types';
 import Context from '../../context';
+import Dropdown from '../Dropdown';
 
 function OtherAnnotationRow(props) {
   // main app state
   const { zoomTo } = React.useContext(Context);
 
   const { annotation, warnClass = '' } = props;
+  const { id, type } = annotation;
+
   const annotationTypes = annotationTypesAll;
+  const { fields } = annotationTypes[type];
 
   return (
     <div className="other-annotation-row">
@@ -27,15 +31,41 @@ function OtherAnnotationRow(props) {
       </div>
 
       <div className="other-annotation-content">
-        <div className="label">{annotationTypes[annotation.type].label}:</div>
-        <input
-          className={`input${warnClass}`}
-          type="text"
-          // onChange={onChange}
-          // onFocus={onFocus}
-          placeholder="Type here"
-          // value={altText}
-        />
+        {fields.map((field) => {
+          const test = 'hjddd';
+          return (
+            <div className="field-wrapper">
+              <label className="label" htmlFor={`${id}-${field.id}`}>
+                {field.label}:
+              </label>
+
+              {/* Text input type */}
+              {field.type && field.type === 'text' && (
+                <input
+                  className={`input${warnClass}`}
+                  type="text"
+                  id={`${id}-${field.id}`}
+                  // onChange={onChange}
+                  // onFocus={onFocus}
+                  placeholder="Type here"
+                  // value={altText}
+                />
+              )}
+
+              {/*  Select input  */}
+              {field.type && field.type === 'select' && (
+                <Dropdown
+                  data={[{ id: 'test', value: 'More eh!' }]}
+                  index={id}
+                  isOpened={false}
+                  onOpen={() => {}}
+                  onSelect={() => {}}
+                  type={"Oh no!"}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div

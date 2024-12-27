@@ -1,5 +1,5 @@
 .other-annotation-row {
-    align-items: center;
+    align-items: start;
     column-gap: var(--spacing-xs);
     display: flex;
     justify-content: space-between;
@@ -17,15 +17,23 @@
 
 .other-annotation-content {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     flex-grow: 1;
     column-gap: var(--spacing-xxs);
 
     & input {
+        width: auto;
         flex-grow: 1;
     }
 
     .label {
         font-weight: bold;
+        display: block;
+    }
+
+    .field-wrapper {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
     }
 }
