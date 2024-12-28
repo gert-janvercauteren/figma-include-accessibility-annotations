@@ -92,6 +92,26 @@ function createAnnotationFrame({ name }) {
   return annotationFrame;
 }
 
+function createSubAnnotationFrame({ name }) {
+  const annotationFrame = figmaLayer.createTransparentFrame({
+    name,
+    height: 1,
+    width: config.annotationWidth - 72
+  });
+
+  // Give it vertical auto-layout formatting
+  annotationFrame.expanded = false;
+  annotationFrame.layoutMode = 'VERTICAL';
+  annotationFrame.counterAxisSizingMode = 'FIXED';
+  annotationFrame.primaryAxisSizingMode = 'AUTO';
+  annotationFrame.itemSpacing = 12;
+  annotationFrame.paddingLeft = 0;
+  annotationFrame.paddingRight = 0;
+  annotationFrame.paddingBottom = 20;
+  annotationFrame.paddingTop = 0;
+  return annotationFrame;
+}
+
 function createAnnotationFrameTitleText({ title }) {
   const annotationTitle = figma.createText();
   annotationTitle.name = 'Annotation title';
@@ -210,6 +230,7 @@ const findDescendentOfFrame = ({ frame, descendantNames = [] }) => {
 
 export {
   createAnnotationFrame,
+  createSubAnnotationFrame,
   createAnnotationLabelValueRow,
   createAnnotationInfoFrame,
   createAnnotationNumberFrame,

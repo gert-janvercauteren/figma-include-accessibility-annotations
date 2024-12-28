@@ -5,6 +5,7 @@ import {
   createAnnotationLabelValueRow,
   createAnnotationNumberFrame,
   createInnerAnnotationFrame,
+  createSubAnnotationFrame,
   getOrCreateMainA11yFrame,
   getOrCreateMainAnnotationsFrame
 } from '../frame-helpers';
@@ -15,16 +16,20 @@ import annotationTypesAll from '../../data/other-annotation-types';
 const otherAnnotationsLayerName = 'Other annotations Layer';
 
 // Create the items inside a single item
-const createOtherAnnotationInfoFrame = ({ type, valueDict }) => {
+const createOtherAnnotationInfoFrame = ({
+  type,
+  valueDict,
+  showItemLabels
+}) => {
   const otherAnnotationInfoFrame = createAnnotationInfoFrame({
-    name: 'Other annotation info'
+    name: `Other annotation info | ${type}`
   });
 
   Object.keys(valueDict).forEach((key) => {
     otherAnnotationInfoFrame.appendChild(
       createAnnotationLabelValueRow({
         rowName: key,
-        label: `${key}:`,
+        label: showItemLabels ? `${key}:` : '',
         value: valueDict[key]
       })
     );
@@ -34,12 +39,12 @@ const createOtherAnnotationInfoFrame = ({ type, valueDict }) => {
 };
 
 // Create a single entry for the sidebar
-const createOtherAnnotation = ({ number, id, type, valueDict }) => {
+const createOtherAnnotation = ({ number, type, valueDict, showItemLabels }) => {
   // Create other annotation with horizontal auto layout
   const otherAnnotationBlock = createInnerAnnotationFrame({
     annotationBlockName: 'Other annotation',
     number,
-    id
+    id: '0'
   });
 
   // Add the annotation number
@@ -52,22 +57,10 @@ const createOtherAnnotation = ({ number, id, type, valueDict }) => {
 
   // Add the annotation info
   otherAnnotationBlock.appendChild(
-    createOtherAnnotationInfoFrame({ type, valueDict })
+    createOtherAnnotationInfoFrame({ type, valueDict, showItemLabels })
   );
 
   return otherAnnotationBlock;
-};
-
-const createOtherAnnotationAnnotationFrame = ({ name }) => {
-  // create an annotation frame
-  const frame = createAnnotationFrame({ name });
-
-  // and add the Annotation frame title
-  const annotationTitle = createAnnotationFrameTitleText({
-    title: name
-  });
-  frame.appendChild(annotationTitle);
-  return frame;
 };
 
 const createOutlineFrame = ({
@@ -154,6 +147,87 @@ const createOutlineFrame = ({
   return annotationBlock.id;
 };
 
+const addAnnotationToSidebar = ({
+  type,
+  index,
+  values,
+  showItemLabels,
+  page,
+  pageType
+}) => {
+  // get main A11y frame if it exists (or create it)
+  const mainFrame = getOrCreateMainA11yFrame({ page, pageType });
+
+  // Add to annotation sidebar
+  const mainAnnotationsFrame = getOrCreateMainAnnotationsFrame({
+    mainFrame,
+    page
+  });
+
+  const annotationFrameName = 'Other annotations';
+
+  const annotationFrameExists = utils.checkIfChildNameExists(
+    mainAnnotationsFrame.id,
+    annotationFrameName,
+    false
+  );
+
+  let annotationFrame;
+
+  if (annotationFrameExists) {
+    annotationFrame = figma.getNodeById(annotationFrameExists);
+  } else {
+    // Create annotation frame
+    annotationFrame = createAnnotationFrame({
+      name: annotationFrameName
+    });
+
+    const annotationTitle = createAnnotationFrameTitleText({
+      title: annotationFrameName
+    });
+    annotationFrame.appendChild(annotationTitle);
+
+    // add Annotation layer to the main annotations frame
+    mainAnnotationsFrame.insertChild(0, annotationFrame);
+  }
+
+  const subFrameName = type;
+  const annotationSubFrameExists = utils.checkIfChildNameExists(
+    annotationFrame.id,
+    subFrameName,
+    false
+  );
+
+  let subTypeFrame;
+
+  if (annotationSubFrameExists) {
+    subTypeFrame = figma.getNodeById(annotationSubFrameExists);
+  } else {
+    // Create sub-type frame
+    subTypeFrame = createSubAnnotationFrame({
+      name: subFrameName
+    });
+
+    const annotationTitle = createAnnotationFrameTitleText({
+      title: subFrameName
+    });
+    subTypeFrame.appendChild(annotationTitle);
+
+    annotationFrame.appendChild(subTypeFrame);
+  }
+
+  const row = createOtherAnnotation({
+    number: index,
+    type,
+    valueDict: values,
+    showItemLabels
+  });
+
+  subTypeFrame.appendChild(row);
+
+  return row.id;
+};
+
 export const addOtherAnnotations = (msg) => {
   figma.currentPage.selection = [];
 
@@ -204,6 +278,7 @@ export const addOtherAnnotations = (msg) => {
 
   annotations.forEach((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
+    const annotationType = annotationTypesAll[type];
 
     const outlineId = createOutlineFrame({
       pageX: bounds.x,
@@ -218,69 +293,36 @@ export const addOtherAnnotations = (msg) => {
 
     index += 1;
 
+    const values = {};
+    annotationType.fields.forEach((field) => {
+      values[field.label] = field.type === 'text' ? name : '';
+    });
+
+    const annotationId = addAnnotationToSidebar({
+      type: annotationType.label,
+      values,
+      index,
+      showItemLabels: annotationType.showAnnotationLabels,
+      page,
+      pageType
+    });
+
     annotationsData[id] = {
       id,
       name,
       type,
-      outlineId
+      outlineId,
+      annotationId,
+      values
     };
   });
+
+  console.log(annotationsData);
 
   otherAnnotationsFrame.setPluginData(
     'annotationData',
     JSON.stringify(annotationsData)
   );
-};
-
-// NOT IN USE NOW
-export const saveAnnotations = (msg) => {
-  const { annotations, page, pageType } = msg;
-
-  // get main A11y frame if it exists (or create it)
-  const mainFrame = getOrCreateMainA11yFrame({ page, pageType });
-
-  // Add to annotation sidebar
-  // TODO: Cleanup old one
-  const mainAnnotationsFrame = getOrCreateMainAnnotationsFrame({
-    mainFrame,
-    page
-  });
-
-  // Create annotation frame
-  const annotationFrame = createOtherAnnotationAnnotationFrame({
-    name: 'Other annotations'
-  });
-
-  // Create sub-type frame
-  const subTypeFrame = createOtherAnnotationAnnotationFrame({
-    name: 'Role'
-  });
-
-  annotationFrame.appendChild(subTypeFrame);
-
-  let index = 0;
-  annotations.forEach((annotation) => {
-    const { id, type, name } = annotation;
-    const valueDict = {
-      Name: name,
-      Role: 'Checkbox',
-      State: 'Unchecked'
-    };
-
-    subTypeFrame.appendChild(
-      createOtherAnnotation({
-        number: index,
-        id,
-        type,
-        valueDict
-      })
-    );
-
-    index += 1;
-  });
-
-  // add Annotation layer to the main annotations frame
-  mainAnnotationsFrame.insertChild(0, annotationFrame);
 };
 
 export const removeOtherAnnotation = (msg) => {
@@ -311,17 +353,25 @@ export const removeOtherAnnotation = (msg) => {
       annotationsData = {};
     }
 
-    const { outlineId } = annotationsData[id];
-    delete annotationsData[id];
+    const { outlineId, annotationId } = annotationsData[id];
 
+    const outlineFrame = figma.getNodeById(outlineId);
+    if (outlineFrame) {
+      outlineFrame.remove();
+    }
+
+    const annotationFrame = figma.getNodeById(annotationId);
+
+    if (annotationFrame) {
+      annotationFrame.remove();
+    }
+
+    delete annotationsData[id];
     otherAnnotationsFrame.setPluginData(
       'annotationData',
       JSON.stringify(annotationsData)
     );
-
-    const outlineFrame = figma.getNodeById(outlineId);
-    outlineFrame.remove();
   }
 };
 
-export default { addOtherAnnotations, saveAnnotations, removeOtherAnnotation };
+export default { addOtherAnnotations, removeOtherAnnotation };

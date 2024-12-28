@@ -8,9 +8,9 @@ export default {
     label: "Role",
     fields: [
       { label: "Name", id: "role", type: "text" },
-      { label: "Role", id: "role", type: "select" },
-      { label: "State", id: "state", type: "text" }
-    ]
+      { label: "Role", id: "role", type: "select" }
+    ],
+    showAnnotationLabels: true
   },
   announcement: {
     icon: <SvgOtherAnnotations.SvgAnnouncement />,
@@ -18,7 +18,8 @@ export default {
     label: "Announcement",
     fields: [
       { label: "Announcement", id: "announcement", type: "text" }
-    ]
+    ],
+    showAnnotationLabels: false
   },
   interaction: {
     icon: <SvgOtherAnnotations.SvgInteraction />,
@@ -26,7 +27,8 @@ export default {
     label: "Interaction",
     fields: [
       { label: "Interaction", id: "interaction", type: "text" }
-    ]
+    ],
+    showAnnotationLabels: false
   },
   motion: {
     icon: <SvgOtherAnnotations.SvgMotion />,
@@ -34,7 +36,8 @@ export default {
     label: "Motion",
     fields: [
       { label: "Motion", id: "motion", type: "text" }
-    ]
+    ],
+    showAnnotationLabels: false
   },
   general: {
     icon: <SvgOtherAnnotations.SvgGeneralNote />,
@@ -42,6 +45,7 @@ export default {
     label: "General note",
     fields: [
       { label: "Note", id: "general", type: "text" }
-    ]
+    ],
+    showAnnotationLabels: false
   }
 };
