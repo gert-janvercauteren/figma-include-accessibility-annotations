@@ -278,7 +278,6 @@ export const addOtherAnnotations = (msg) => {
 
   annotations.forEach((annotation) => {
     const { id, name, absoluteRenderBounds, type } = annotation;
-    const annotationType = annotationTypesAll[type];
 
     const outlineId = createOutlineFrame({
       pageX: bounds.x,
@@ -293,31 +292,31 @@ export const addOtherAnnotations = (msg) => {
 
     index += 1;
 
-    const values = {};
-    annotationType.fields.forEach((field) => {
-      values[field.label] = field.type === 'text' ? name : '';
-    });
-
-    const annotationId = addAnnotationToSidebar({
-      type: annotationType.label,
-      values,
-      index,
-      showItemLabels: annotationType.showAnnotationLabels,
-      page,
-      pageType
-    });
+    // TODO: Only add when updating the info in the plugin
+    // const annotationType = annotationTypesAll[type];
+    // const values = {};
+    // annotationType.fields.forEach((field) => {
+    //   values[field.label] = field.type === 'text' ? name : '';
+    // });
+    //
+    // const annotationId = addAnnotationToSidebar({
+    //   type: annotationType.label,
+    //   values,
+    //   index,
+    //   showItemLabels: annotationType.showAnnotationLabels,
+    //   page,
+    //   pageType
+    // });
 
     annotationsData[id] = {
       id,
       name,
       type,
-      outlineId,
-      annotationId,
-      values
+      outlineId
+      // annotationId,
+      // values
     };
   });
-
-  console.log(annotationsData);
 
   otherAnnotationsFrame.setPluginData(
     'annotationData',
