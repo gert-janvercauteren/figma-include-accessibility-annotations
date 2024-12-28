@@ -1,15 +1,15 @@
-import * as React from "react";
-import Context from "../context";
+import * as React from 'react';
+import Context from '../context';
 
-import annotationTypesAll from "../data/other-annotation-types";
-import { utils } from "../constants";
+import annotationTypesAll from '../data/other-annotation-types';
+import { utils } from '../constants';
 
 // components
 import {
   AnnotationStepPage,
   HeadingStep,
   OtherAnnotationRow
-} from "../components";
+} from '../components';
 
 function OtherAnnotations() {
   const cnxt = React.useContext(Context);
@@ -20,7 +20,7 @@ function OtherAnnotations() {
   const [selectedNodes, setSelectedNodes] = React.useState(null);
 
   // ui state
-  const routeName = "Other annotations";
+  const routeName = 'Other annotations';
   const annotationTypes = annotationTypesAll;
   const annotationTypesArray = Object.keys(annotationTypes);
   const hasSelectedNodes = selectedNodes && selectedNodes.length > 0;
@@ -37,17 +37,28 @@ function OtherAnnotations() {
 
   const stepOneText = hasSelectedNodes
     ? `${selectedText()} selected`
-    : "Hold Ctrl/Cmd to select layer in your mock that needs annotating, and choose type of annotation.";
+    : 'Hold Ctrl/Cmd to select layer in your mock that needs annotating, and choose type of annotation.';
+
+  const onRemove = (id) => {
+    sendToFigma('remove-other-annotation', { page, pageType, id });
+
+    // remove from main state
+    const newOtherAnnotationsObj = { ...otherAnnotations };
+    delete newOtherAnnotationsObj[id];
+
+    // update main state
+    updateState('otherAnnotations', newOtherAnnotationsObj);
+  };
 
   React.useEffect(() => {
-    sendToFigma("other-annotations-listener", {
+    sendToFigma('other-annotations-listener', {
       page,
       pageType,
       shouldListen: true
     });
 
     return () => {
-      sendToFigma("other-annotations-listener", {
+      sendToFigma('other-annotations-listener', {
         page,
         pageType,
         shouldListen: false
@@ -70,7 +81,7 @@ function OtherAnnotations() {
       type: annotationType
     }));
 
-    sendToFigma("add-other-annotations", {
+    sendToFigma('add-other-annotations', {
       page,
       pageType,
       annotations: newAnnotations,
@@ -82,7 +93,7 @@ function OtherAnnotations() {
       otherAnnotationsObj[item.id] = item;
     });
 
-    updateState("otherAnnotations", {
+    updateState('otherAnnotations', {
       ...otherAnnotations,
       ...otherAnnotationsObj
     });
@@ -101,7 +112,13 @@ function OtherAnnotations() {
             {otherAnnotationsArray.map((key) => {
               const { id, type } = otherAnnotations[key];
 
-              return <OtherAnnotationRow annotation={{ id, type }} key={id} />;
+              return (
+                <OtherAnnotationRow
+                  annotation={{ id, type }}
+                  key={id}
+                  onRemove={() => onRemove(id)}
+                />
+              );
             })}
           </React.Fragment>
         )}

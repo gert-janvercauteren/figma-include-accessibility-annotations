@@ -487,6 +487,10 @@ figma.ui.onmessage = async (msg) => {
     step.otherAnnotations.addOtherAnnotations(msg);
   }
 
+  if (type === 'remove-other-annotation') {
+    step.otherAnnotations.removeOtherAnnotation(msg);
+  }
+
   // close plugin
   if (type === 'close-plugin') {
     // https://www.figma.com/plugin-docs/api/figma-ui/#close

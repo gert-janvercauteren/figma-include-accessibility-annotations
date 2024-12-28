@@ -190,7 +190,6 @@ export const addOtherAnnotations = (msg) => {
   let index = startIndex;
 
   // Get previous saved data
-
   const previousRawData = otherAnnotationsFrame.getPluginData('annotationData');
   let annotationsData;
   try {
@@ -284,4 +283,45 @@ export const saveAnnotations = (msg) => {
   mainAnnotationsFrame.insertChild(0, annotationFrame);
 };
 
-export default { addOtherAnnotations, saveAnnotations };
+export const removeOtherAnnotation = (msg) => {
+  const { id, page, pageType } = msg;
+
+  // get main A11y frame if it exists (or create it)
+  const mainFrame = getOrCreateMainA11yFrame({ page, pageType });
+
+  const otherAnnotationsFrameId = utils.checkIfChildNameExists(
+    mainFrame.id,
+    otherAnnotationsLayerName
+  );
+
+  if (otherAnnotationsFrameId) {
+    const otherAnnotationsFrame = figma.getNodeById(otherAnnotationsFrameId);
+
+    // Get previous saved data
+    const previousRawData =
+      otherAnnotationsFrame.getPluginData('annotationData');
+    let annotationsData;
+    try {
+      annotationsData = JSON.parse(previousRawData);
+    } catch (e) {
+      console.error('Could not parse previous annotation data');
+    }
+
+    if (typeof annotationsData !== 'object' || annotationsData === null) {
+      annotationsData = {};
+    }
+
+    const { outlineId } = annotationsData[id];
+    delete annotationsData[id];
+
+    otherAnnotationsFrame.setPluginData(
+      'annotationData',
+      JSON.stringify(annotationsData)
+    );
+
+    const outlineFrame = figma.getNodeById(outlineId);
+    outlineFrame.remove();
+  }
+};
+
+export default { addOtherAnnotations, saveAnnotations, removeOtherAnnotation };

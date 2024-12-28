@@ -18,6 +18,9 @@ function OtherAnnotationRow(props) {
   const annotationTypes = annotationTypesAll;
   const { fields } = annotationTypes[type];
 
+  // on functions
+  const { onRemove } = props;
+
   return (
     <div className="other-annotation-row">
       <div>
@@ -71,13 +74,9 @@ function OtherAnnotationRow(props) {
       <div
         aria-label="remove other annotation"
         className="btn-remove"
-        onClick={() => {
-          /* TODO */
-        }}
+        onClick={onRemove}
         onKeyDown={(e) => {
-          if (utils.isEnterKey(e.key)) {
-            /* Todo */
-          }
+          if (utils.isEnterKey(e.key)) onRemove();
         }}
         role="button"
         tabIndex="0"
@@ -93,7 +92,8 @@ OtherAnnotationRow.propTypes = {
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired
   }).isRequired,
-  warnClass: PropTypes.string
+  warnClass: PropTypes.string,
+  onRemove: PropTypes.func.isRequired
 };
 
 export default React.memo(OtherAnnotationRow);
